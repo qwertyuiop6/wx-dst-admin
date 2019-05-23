@@ -1,0 +1,27 @@
+{
+  "name": "wechat-demo",
+  "version": "1.0.0",
+  "description": "wechat-demo",
+  "main": "app.js",
+  "author": "qwerasdf",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bluebird": "^3.5.3",
+    "execa": "^1.0.0",
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0",
+    "raw-body": "^2.3.3",
+    "request": "^2.88.0",
+    "sha1": "^1.1.1",
+    "wechat": "^2.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
