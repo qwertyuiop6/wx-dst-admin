@@ -1,0 +1,70 @@
+{
+    "button": [{
+            "name": "游戏管理",
+            "sub_button": [{
+                    "type": "click",
+                    "name": "当前状态",
+                    "key": "getStatus"
+                },
+                {
+                    "type": "click",
+                    "name": "游戏更新",
+                    "key": "update"
+                },
+                {
+                    "type": "click",
+                    "name": "mod更新",
+                    "key": "upmod"
+                },
+                {
+                    "type": "click",
+                    "name": "删除存档",
+                    "key": "del"
+                },
+                {
+                    "type": "click",
+                    "name": "游戏重置",
+                    "key": "reset"
+                }
+            ]
+        },
+        {
+            "name": "地上",
+            "sub_button": [{
+                    "type": "click",
+                    "name": "启动",
+                    "key": "mSta"
+                },
+                {
+                    "type": "click",
+                    "name": "停止",
+                    "key": "mStop"
+                },
+                {
+                    "type": "click",
+                    "name": "重启",
+                    "key": "mRe"
+                }
+            ]
+        },
+        {
+            "name": "洞穴",
+            "sub_button": [{
+                    "type": "click",
+                    "name": "启动",
+                    "key": "cSta"
+                },
+                {
+                    "type": "click",
+                    "name": "停止",
+                    "key": "cStop"
+                },
+                {
+                    "type": "click",
+                    "name": "重启",
+                    "key": "cRe"
+                }
+            ]
+        }
+    ]
+}
