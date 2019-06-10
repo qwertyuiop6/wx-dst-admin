@@ -6,8 +6,9 @@
 #### 首先配置 configs/config.json
 * 填入wx的 appid,appsecret
 * 自定义游戏服名称，加入管理员(wx里的唯一昵称)
-* 是否是双服，若是则在cave里填入cave所在服务器的信息
-* 并在cave所在服里把主服ssh 公钥丢进去
+- 是否是双服，若是则在cave里填入cave所在服务器的信息,并在cave服里:
+	- 把主服ssh 公钥丢进去
+	- 根目录创建wx-dst文件夹,丢入dst.sh,并赋权可执行
 
 #### 程序运行
 ```bash
