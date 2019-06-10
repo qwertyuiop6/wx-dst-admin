@@ -26,7 +26,7 @@ const accessToken = async (opts) => {
   } catch (e) {
     console.log('解析本地access_token错误,开始更新token..');
     data = await updateAccessToken();
-    saveAccessToken(data);
+    await saveAccessToken(data);
     return data.access_token;
   }
   if (isValidAccessToken(data)) {
@@ -36,7 +36,7 @@ const accessToken = async (opts) => {
   }
   console.log('access_token已过期,开始更新token..');
   data = await updateAccessToken();
-  saveAccessToken(data);
+  await saveAccessToken(data);
   return data.access_token;
 };
 
