@@ -9,16 +9,16 @@ const request = Promise.promisify(require('request'));
 
 const token_path = path.join(__dirname, '../configs/token.json');
 
-const pre = 'https://api.weixin.qq.com/cgi-bin/';
-const api = {
-  accessToken: `${pre}token?grant_type=client_credential`,
-};
+// const url = 'https://api.weixin.qq.com/cgi-bin/';
+const token_api='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential'
+
+// const api = {
+//   accessToken: `${url}token?grant_type=client_credential`,
+// };
 
 const accessToken = async (opts) => {
   this.appID = opts.appID;
   this.appSecret = opts.appSecret;
-  // this.getAccessToken = opts.getAccessToken
-  // this.saveAccessToken = opts.saveAccessToken
 
   let data = await getAccessToken(token_path);
   try {
@@ -30,8 +30,7 @@ const accessToken = async (opts) => {
     return data.access_token;
   }
   if (isValidAccessToken(data)) {
-    // Promise.resolve(data)
-    console.log(`access_token在有效内,值为:[ ${data.access_token} ]`);
+    console.log(`access_token在有效内...`);
     return data.access_token;
   }
   console.log('access_token已过期,开始更新token..');
@@ -61,7 +60,6 @@ let isValidAccessToken = (data) => {
   if (!data || !data.access_token || !data.expires_in) {
     return false;
   }
-
   const {
     expires_in,
   } = data;
@@ -76,14 +74,14 @@ let updateAccessToken = () => {
     appID,
     appSecret,
   } = this;
-  const url = `${api.accessToken}&appid=${appID}&secret=${appSecret}`;
+  const url = `${token_api}&appid=${appID}&secret=${appSecret}`;
 
   return new Promise((resolve, reject) => {
     request({
       url,
       json: true,
     }).then((res) => {
-      console.log('请求token结果:', res.body);
+      console.log('请求token成功,结果:', res.body);
       const data = {};
       data.access_token = res.body.access_token;
       const now = (new Date().getTime());
@@ -91,7 +89,7 @@ let updateAccessToken = () => {
       data.expires_in = expires_in;
       resolve(data);
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       reject(err);
     });
   });

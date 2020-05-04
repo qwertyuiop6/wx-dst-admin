@@ -1,6 +1,7 @@
 /* eslint-disable no-mixed-operators */
 /* eslint-disable camelcase */
 const {
+  exec,
   execSync,
 } = require('child_process');
 
@@ -15,64 +16,58 @@ const {
   isSingleServer,
 } = config;
 
+// 若不是单独服务器则读取cave洞穴服务器的ip
 if (!isSingleServer) {
   caveIp = config.server.cave.ip;
+  caveUser=config.server.cave.user;
 }
 
-function getStatus() {
-  const mStatus = execSync('echo 0 | ./dst.sh', (err, stdout) => stdout);
-
-  let cStatus;
-  if (isSingleServer) {
-    cStatus = execSync('echo 00 | ./dst.sh', (err, stdout) => stdout);
-  } else {
-    cStatus = execSync(`echo 'echo 00 | ./wx-dst/dst.sh' | ssh root@${caveIp}`, (err, stdout) => stdout);
-  }
-
-  return `${mStatus}\n${cStatus.toString().split('\n').slice(-1)}`;
+// 执行shell操作脚本管理,数字控制类型通过pipe输入stdin
+function shellAdmin(type,sync=true){
+	if(isSingleServer||String.prototype.endsWith.call(type,0)){
+		if(sync){
+			 return execSync(`$HOME/wechat-dst/dst.sh ${type}`).toString();
+		}
+		exec(`$HOME/wechat-dst/dst.sh ${type}`);
+	}else{
+		if(sync){
+		cRes=execSync(`echo "./dst.sh ${type}" | ssh root@${caveIp}`);
+                return `${cRes.toString().split('\n').slice(-1)}`;
+		}
+		exec(`echo './wx-dst/dst.sh ${type}' | ssh root@${caveIp}`);
+	}
 }
 
-function madmin(type) {
-  return execSync(`echo ${type} | ./dst.sh`, (err, stdout) => stdout).toString();
-}
 
-function cadmin(type) {
-  return execSync(`echo 'echo ${type}| ./wx-dst/dst.sh' | ssh root@${caveIp}`, (err, stdout) => stdout).toString().split('\n').reverse()[0];
-}
-
+// 各种微信key的管理方法
 function adminSwitch(cmd) {
-  if (isSingleServer) {
-    cadmin = madmin;
-  }
   switch (cmd) {
     case 'getStatus':
-      return getStatus();
+      return `${shellAdmin('00')}\n${shellAdmin('01')}`;
     case 'mSta':
-      return madmin(1);
+      return shellAdmin(10);
     case 'mStop':
-      return madmin(3);
+      return shellAdmin(20);
     case 'mRe':
-      return madmin(5);
+      return shellAdmin(30);
     case 'cSta':
-      return cadmin(2);
+      return shellAdmin(11);
     case 'cStop':
-      return cadmin(4);
+      return shellAdmin(21);
     case 'cRe':
-      return cadmin(6);
+      return shellAdmin(31);
     case 'update':
-      madmin(3);
-      cadmin(4);
-      madmin(7);
-      cadmin(7);
+      shellAdmin(40,false);
+      shellAdmin(41,false);
       return '游戏更新中，大概3分钟左右更新完成..';
     case 'upmod':
-      madmin(5);
-      cadmin(6);
+      shellAdmin(30);
+      shellAdmin(31);
       return '游戏重启完成,mod更新成功~';
     case 'del':
-      return `${madmin(80)}\n${cadmin(81)}`;
+      return `${shellAdmin(50)}\n${shellAdmin(51)}`;
     case 'reset':
-      return `${madmin(90)}\n${cadmin(91)}`;
+      return `${shellAdmin(60)}\n${shellAdmin(61)}`;
     default:
       return '未知指令!';
   }

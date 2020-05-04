@@ -8,14 +8,15 @@
                 },
                 {
                     "type": "click",
-                    "name": "游戏更新",
-                    "key": "update"
-                },
-                {
-                    "type": "click",
                     "name": "mod更新",
                     "key": "upmod"
                 },
+                {
+                    "type": "click",
+                    "name": "更新游戏",
+                    "key": "update"
+                },
+                
                 {
                     "type": "click",
                     "name": "删除存档",
@@ -23,7 +24,7 @@
                 },
                 {
                     "type": "click",
-                    "name": "游戏重置",
+                    "name": "存档重置",
                     "key": "reset"
                 }
             ]

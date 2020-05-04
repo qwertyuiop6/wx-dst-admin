@@ -1,169 +1,169 @@
 #!/bin/bash
 
-master='../.klei/DoNotStarveTogether/MyDediServer/Master/'
-cave='../.klei/DoNotStarveTogether/MyDediServer/Caves/'
+master="$HOME/.klei/DoNotStarveTogether/MyDediServer/Master"
+cave="$HOME/.klei/DoNotStarveTogether/MyDediServer/Caves"
 
 dst_dir=(${master} ${cave})
+dst_name=("Master" "Caves")
+dst_zh=("地上" "洞穴")
+dst_sh=("overworld" "cave")
 
-goMaster(){
-	cd ~/dst/bin
 
-	if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Master"|sed -n '1P'|awk '{print $2}'` ]]; then
-		screen -dm sh overworld.sh && if [[ `echo $?` -eq 0 ]]; 
+# 查看状态
+status(){
+	if [[ -n `ps -ef | grep -v grep |grep -v "dst.sh"|grep ${dst_name[$1]}|sed -n '1P'|awk '{print $2}'` ]]; then
+		echo -n " ${dst_zh[$1]}正在正常运行~ 😀"
+    else
+        echo -n " ${dst_zh[$1]}状态:关闭 😥"
+	fi
+}
+
+#　启动
+start(){
+    cd ~/dst/bin
+    # dst=${dst_dir[$1]}
+    if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep ${dst_name[$1]}|sed -n '1P'|awk '{print $2}'` ]]; then
+		screen -dm sh ${dst_sh[$1]}.sh && if [[ `echo $?` -eq 0 ]]; 
 		then
-			echo -n " 😉 地上启动成功~ 😉"
+			echo -n " ${dst_zh[$1]}启动成功~ 😉"
 		fi
 	else
-		echo -n " 😆 地上已经在运行啦~ 😆"
+		echo -n " ${dst_zh[$1]}已经在运行啦~ 😆"
 	fi
-	
 }
 
-goCaves(){
-	cd ~/dst/bin
-	
-	if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Caves"|sed -n '1P'|awk '{print $2}'` ]]; then
-		screen -dm sh cave.sh && if [[ `echo $?` -eq 0 ]]; then
-			echo -n " 😉 洞穴启动成功~ 😉"
-		fi
-	else
-		echo -n " 😆 洞穴已经在运行啦~ 😆"
-	fi
-}
-go(){
-	goMaster
-	echo ""
-	goCaves
-}
-
-stopMaster(){
-	ps -ef|grep Master|awk '{print $2}'|xargs kill -9
-	if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Master"|sed -n '1P'|awk '{print $2}'` ]]; then
-		echo  -n " 🙃 地上关闭成功~ 🙃"
-	fi
-}
-stopCaves(){
-	ps -ef|grep Caves|awk '{print $2}'|xargs kill -9
-	if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Caves"|sed -n '1P'|awk '{print $2}'` ]]; then
-		echo  -n " 🙃 洞穴关闭成功~ 🙃"
-	fi
-}
+# 停止
 stop(){
-	stopMaster
-	echo ""
-    stopCaves
+	pid=`ps -ef | grep -v grep |grep -v "dst.sh"|grep ${dst_name[$1]}|sed -n '1P'|awk '{print $2}'`
+	
+	if [[ -z $pid ]]; then
+		echo  -n " ${dst_zh[$1]}状态:关闭 🙃"
+	else
+		kill -9 $pid
+		echo  -n " ${dst_zh[$1]}关闭成功~ 🙃"
+	fi
 }
 
 # 重启
-restartm(){
-	stopMaster
-	# echo ""
-	goMaster
-}
-restartc(){
-	stopCaves
-	# echo ""
-	goCaves
-}
 restart(){
-	stop
-	echo ""
-	go
+	stop $1
+	start $1
 }
 
 # 重置
-resetm(){
-	del 0
-	# echo ""
-	goMaster
-}
-resetc(){
-	del 1
-	# echo ""
-	goCaves
-}
 reset(){
-	del
-	echo ""
-	go
+	del $1
+	start $1
 }
 
+#删除存档
 del(){
-	[ $1 -eq 0 ]&&stopMaster
-	[ $1 -eq 1 ]&&stopCaves
-	# echo ""
-	# for i in ${dst_dir[@]};
-	# do
-	# 	if [[ -d ${i}"save" ]]; then
-	# 		rm -r ${i}"save"&&rm -r `find ${i} -name "*.txt"` && rm -r ${i}"backup"
-	# 		echo -e "\033[32m ##: ${i}'s file already delete! \033[0m"
-	# 	fi
-	# done
+	stop $1
+
 	dir=${dst_dir[$1]}
-	if [[ -d ${dir}"save" ]]; then
-		rm -r ${dir}"save"&&rm -r `find ${dir} -name "*.txt"` && rm -r ${dir}"backup"
-		[ $1 -eq 0 ]&&echo -n "地上文件删除完毕"
-		[ $1 -eq 1 ]&&echo -n "洞穴文件删除完毕"
+
+	if test -d ${dir}/save
+	then
+		# rm -r ${dir}"save"&&rm -r `find ${dir} -name "*.txt"` && rm -r ${dir}"backup"
+		rm -r ${dir}/{save,backup}
+		echo -n "${dst_zh[$1]}游戏文件删除完毕~"
 	fi
 }
+
+# 更新游戏版本
 updst(){
-	# stop
-	screen -dm ~/steamcmd/steamcmd.sh +login anonymous +force_install_dir ~/dst +app_update 343050 validate +quit
+	if [ $1 ];then
+		stop $1
+	else
+		stop 0
+		stop 1
+	fi
+	cp ~/dst/mods/dedicated_server_mods_setup.lua ~/dsms.lua.bak
+
+	~/steamcmd/steamcmd.sh +login anonymous +force_install_dir ~/dst +app_update 343050 validate +quit
 	if [[ `echo $?` -eq 0 ]]; then
-		echo -n "饥荒服务器游戏更新完成~"
+		echo -n " 饥荒服务器游戏更新完成~"
 	fi
+
+	mv ~/dsms.lua.bak ~/dst/mods/dedicated_server_mods_setup.lua
 }
-statusm(){
-    if [[ -n `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Master"|sed -n '1P'|awk '{print $2}'` ]]; then
-		echo -n " 😀 地上正在正常运行~ 😀"
-    else
-        echo -n " 😥 地上状态:关闭 😥"
-	fi
-}
-statusc(){
-    if [[ -n `ps -ef | grep -v grep |grep -v "dst.sh"|grep "Caves"|sed -n '1P'|awk '{print $2}'` ]]; then
-		echo -n " 😀 洞穴正在正常运行~ 😀"
-    else
-        echo -n " 😥 洞穴状态:关闭 😥"
-	fi
-}
+
 
 main(){
-	read -p "Input your choose number: " choose
-		case $choose in
-			0 ) statusm
-				;;
-            00 ) statusc
-                ;;
-			1 ) goMaster
-				;;
-			2 ) goCaves
-				;;
-			3 ) stopMaster
-				;;
-			4 ) stopCaves
-				;;
-			5 ) restartm
-				;;
-			6 ) restartc
-				;;
-			7 ) updst
-				;;
-			8 ) del 0
-				del 1
-				;;
-            80 ) del 0
-                ;;
-            81 ) del 1
-				;;
-            90 ) resetm
-                ;;
-			91 ) resetc
-				;;
-			* ) echo -e "\033[31mPlease enter the number before the following options!! \033[0m"
-				main
-				;;
-		esac
+	if [ $# -eq 0 ];then
+		echo -e "\033[42;30m ### 来做个抉 ♂ 择吧! ### \033[0m"
+		echo -e "\033[32m 0. \033[0m 查看游戏服务器状态"
+		echo -e "\033[32m 1. \033[0m 启动地上+洞穴"
+		echo -e "\033[32m 2. \033[0m 停止游戏进程"
+		echo -e "\033[32m 3. \033[0m 重启游戏进程,可以用来更新mod"
+		echo -e "\033[32m 4. \033[0m 更新饥荒游戏服务器版本"                                                                                             
+		echo -e "\033[32m 5. \033[0m 删除游戏存档记录"
+		echo -e "\033[32m 6. \033[0m 重置饥荒服务器,将删除游戏存档记录"
+		echo -e "\033[32m PS:\033[0m (选项加 0或1可以单独操作地上或洞穴,如:10 启动地上)"
+		read -p "输入数字选项,回车确认:" choose
+	else
+		choose=$1
+	fi
+		
+	case $choose in
+		0 ) status 0
+			status 1
+			;;
+		00 ) status 0
+			;;
+        01 ) status 1
+            ;;
+
+		1 ) start 0
+            start 1
+			;;
+		10 ) start 0
+			;;
+        11 ) start 1
+            ;;
+
+		2 ) stop 0
+			stop 1
+			;;
+		20 ) stop 0
+			;;
+		21 ) stop 1
+			;;
+		
+		3 )	restart 0
+			restart 1
+			;;
+		30 ) restart 0
+			;;
+		31 ) restart 1
+			;;
+
+		4 ) updst
+			;;
+		40 ) updst 0
+			;;
+		41 ) updst 1
+			;;
+
+		5 ) del 0
+			del 1
+			;;
+        50 ) del 0
+            ;;
+        51 ) del 1
+			;;
+        
+		6 ) reset 0
+			reset 1
+			;;
+		60 ) reset 0
+            ;;
+		61 ) reset 1
+			;;
+		* ) echo -e "\033[31m 请输入下列正确的数字选项!! \033[0m"
+			main
+			;;
+	esac
 }
 
-main
+main $1

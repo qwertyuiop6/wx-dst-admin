@@ -1,24 +1,28 @@
 module.exports = {
   appID: '',
   appSecret: '',
-  dstname: '哲学♂世界',
-  adminlist: ['Butterfly', '',''],
-  rootlist: ['Butterfly'],
-  rootkey: ['del', 'reset'],
+  token:'abcdefg',
+  dstname: '',
+  adminlist: [],
+  rootlist: [],
+  rootkey: ['reset'],
 
   isSingleServer:true,
   server: {
     master: {
       user: '',
       ip: '',
-      port: '22',
+      port: '',
       passwd: '',
     },
     cave: {
       user: '',
       ip: '',
-      port: '22',
+      port: '',
       passwd: '',
     },
   },
+
+  webadmin: [{
+  }],
 };
