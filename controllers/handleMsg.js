@@ -3,26 +3,14 @@ const getrb = require('raw-body');
 
 const formartXml = require('../utils/formartXml');
 const msgUtil = require('../utils/msgUtil');
-// const authToken = require('../utils/authToken');
 const getUserInfo = require('../utils/getUserInfo');
 const adminutils = require('../utils/adminutils');
-const wxAuth = require('../controllers/wxAuth');
+
 
 const cfg = require('../configs/config');
 
 // 微信post请求消息处理
-const handleMsg = async (ctx, next) => {
-  // console.log(ctx); //打印请求信息
-
-  // 判断消息请求来源
-  // if (!wxAuth(ctx)) return false;
-  next();
-  // console.log('query值:', ctx.query);
-
-  // 接到消息检测更新access_token
-  // const token = await authToken(cfg);
-  // console.log('当前token值:', token);
-
+const handleMsg = async (ctx) => {
   // 获取消息内容xml
   const data = await getrb(ctx.req, {
     length: ctx.length,
@@ -36,10 +24,10 @@ const handleMsg = async (ctx, next) => {
 
   // 首次关注发送的news类型消息
   const newsInfo = {
-    title: ['欢迎来到哲学♂世界管理台', '别吃那个土豆啊那是服务器', '心情真的很黑♂暗'],
+    title: [`欢迎来到哲学♂世界管理台`, '别吃那个土豆啊那是服务器', '心情真的很黑♂暗'],
     desc: ['别点我', '点了也没用', '不信是吧'],
     picurl: ['http://pnjhl03pt.bkt.clouddn.com/tudou.jpg', 'http://pnjhl03pt.bkt.clouddn.com/heian.jpg', 'http://pnjhl03pt.bkt.clouddn.com/huaji.jpg'],
-    url: ['', '', 'https://wtfk.world'],
+    url: ['', '', ''],
   };
 
   // 事件类型处理
