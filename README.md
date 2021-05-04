@@ -13,7 +13,7 @@
 * 填入wx公众号or测试号的 appid,appsecret,然后自定义填入一个token
 * 自定义游戏服名称，加入管理员(wx里的唯一昵称)
 - 是否是双服，若是则在cave里填入cave所在服务器的信息,并在cave服里:
-	- 把主服ssh 公钥丢进去
+	- 把主服ssh 公钥丢进ssh的authorized_keys
 	- 根目录丢入dst.sh,并赋权可执行
 
 #### 管理程序运行

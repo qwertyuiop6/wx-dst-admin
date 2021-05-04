@@ -13,7 +13,7 @@
                 },
                 {
                     "type": "click",
-                    "name": "更新游戏",
+                    "name": "版本更新",
                     "key": "update"
                 },
                 

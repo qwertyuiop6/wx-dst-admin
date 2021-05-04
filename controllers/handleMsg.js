@@ -4,7 +4,7 @@ const getrb = require('raw-body');
 const formartXml = require('../utils/formartXml');
 const msgUtil = require('../utils/msgUtil');
 const getUserInfo = require('../utils/getUserInfo');
-const adminutils = require('../utils/adminutils');
+const admin = require('../utils/admin');
 
 
 const cfg = require('../configs/config');
@@ -39,8 +39,8 @@ const handleMsg = async (ctx) => {
       const msgUserName = await getUserInfo(cfg, msg.FromUserName);
       console.log(`用户：${msgUserName} 触发事件: ${msg.EventKey}`);
       // msgUtil.reply(msg, 'text', ctx, `Hello ♂ ${msgUserName}狗管理`);
-      const adminCallback = adminutils(msgUserName, msg.EventKey);
-      msgUtil.reply(msg, 'text', ctx, adminCallback);
+      const result = adminutils(msgUserName, msg.EventKey);
+      msgUtil.reply(msg, 'text', ctx, result);
     }
     // 其他类型处理
   } else if (msg.MsgType === 'text') {
