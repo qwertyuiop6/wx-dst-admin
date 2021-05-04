@@ -24,7 +24,7 @@ const handleMsg = async (ctx) => {
 
   // 首次关注发送的news类型消息
   const newsInfo = {
-    title: [`欢迎来到哲学♂世界管理台`, '别吃那个土豆啊那是服务器', '心情真的很黑♂暗'],
+    title: [`欢迎来到饥荒服务器控制台`, '别吃那个土豆啊那是服务器', '心情真的很黑♂暗'],
     desc: ['别点我', '点了也没用', '不信是吧'],
     picurl: ['http://pnjhl03pt.bkt.clouddn.com/tudou.jpg', 'http://pnjhl03pt.bkt.clouddn.com/heian.jpg', 'http://pnjhl03pt.bkt.clouddn.com/huaji.jpg'],
     url: ['', '', ''],
