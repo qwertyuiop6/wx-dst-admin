@@ -9,14 +9,14 @@ const {
     getLocal
 }=require('../service/version');
 
-// const config = require('../configs/config');
+const config = require('../configs/config');
 const {
     dstname,
     adminlist,
     rootlist,
     rootkey,
     isSingleServer,
-} = require('../configs/config');
+} = config;
 
 let caveIp;
 // 若不是单独服务器则读取cave洞穴服务器的ip
@@ -87,5 +87,5 @@ module.exports = async (userName, key) => {
     const newV=await getNew();
     return !adminlist.includes(userName) && `${userName},你没有权限操作哦~` ||
     rootkey.includes(key) && !rootlist.includes(userName) && `${userName},你没有这个特殊操作权限!` ||
-    `⭐⭐--${dstname}[V${localV]--⭐⭐\n${adminSwitch(key)}${newV>localV?`\n饥荒有版本更新:[V${newV}]`:''}`;
+    `⭐${dstname}[V${localV}]⭐\n${adminSwitch(key)}${newV>localV?`\n发现饥荒版本更新:[V${newV}]`:''}`;
 }

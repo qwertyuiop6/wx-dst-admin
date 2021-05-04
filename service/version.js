@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
+const fs=require('fs');
 
 const getNew = async () => {
     const res = await axios.get('https://forums.kleientertainment.com/game-updates/dst');
