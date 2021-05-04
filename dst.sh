@@ -1,7 +1,7 @@
 #!/bin/bash
 
-master="$HOME/.klei/DoNotStarveTogether/MyDediServer/Master"
-cave="$HOME/.klei/DoNotStarveTogether/MyDediServer/Caves"
+master="$HOME/.klei/DoNotStarveTogether/MyDediServer/Master/"
+cave="$HOME/.klei/DoNotStarveTogether/MyDediServer/Caves/"
 
 dst_dir=(${master} ${cave})
 dst_name=("Master" "Caves")
@@ -21,7 +21,7 @@ status(){
 #　启动
 start(){
     cd ~/dst/bin
-    # dst=${dst_dir[$1]}
+    
     if [[ -z `ps -ef | grep -v grep |grep -v "dst.sh"|grep ${dst_name[$1]}|sed -n '1P'|awk '{print $2}'` ]]; then
 		screen -dm sh ${dst_sh[$1]}.sh && if [[ `echo $?` -eq 0 ]]; 
 		then
@@ -35,24 +35,26 @@ start(){
 # 停止
 stop(){
 	pid=`ps -ef | grep -v grep |grep -v "dst.sh"|grep ${dst_name[$1]}|sed -n '1P'|awk '{print $2}'`
-	
+
 	if [[ -z $pid ]]; then
-		echo  -n " ${dst_zh[$1]}状态:关闭 🙃"
+		echo  -e " ${dst_zh[$1]}状态:关闭 🙃"
 	else
 		kill -9 $pid
-		echo  -n " ${dst_zh[$1]}关闭成功~ 🙃"
+		echo  -e " ${dst_zh[$1]}关闭成功~ 🙃"
 	fi
 }
 
 # 重启
 restart(){
 	stop $1
+# 	echo ""
 	start $1
 }
 
 # 重置
 reset(){
 	del $1
+# 	echo ""
 	start $1
 }
 
@@ -66,7 +68,7 @@ del(){
 	then
 		# rm -r ${dir}"save"&&rm -r `find ${dir} -name "*.txt"` && rm -r ${dir}"backup"
 		rm -r ${dir}/{save,backup}
-		echo -n "${dst_zh[$1]}游戏文件删除完毕~"
+		echo -e " ${dst_zh[$1]}文件删除完毕~ 😉"
 	fi
 }
 
@@ -78,15 +80,17 @@ updst(){
 		stop 0
 		stop 1
 	fi
-	cp ~/dst/mods/dedicated_server_mods_setup.lua ~/dsms.lua.bak
+
+	modlink="$HOME/.klei/DoNotStarveTogether/MyDediServer/mods_setup.lua"
+	modlua="$HOME/dst/mods/dedicated_server_mods_setup.lua"
+	
+	[ -f $modlink ]||ln $modlua $modlink
 
 	~/steamcmd/steamcmd.sh +login anonymous +force_install_dir ~/dst +app_update 343050 validate +quit
-	if [[ `echo $?` -eq 0 ]]; then
-		echo -n " 饥荒服务器游戏更新完成~"
-	fi
 
-	mv ~/dsms.lua.bak ~/dst/mods/dedicated_server_mods_setup.lua
+	ln -f $modlink $modlua
 }
+
 
 
 main(){
@@ -100,11 +104,11 @@ main(){
 		echo -e "\033[32m 5. \033[0m 删除游戏存档记录"
 		echo -e "\033[32m 6. \033[0m 重置饥荒服务器,将删除游戏存档记录"
 		echo -e "\033[32m PS:\033[0m (选项加 0或1可以单独操作地上或洞穴,如:10 启动地上)"
+		
 		read -p "输入数字选项,回车确认:" choose
 	else
 		choose=$1
 	fi
-		
 	case $choose in
 		0 ) status 0
 			status 1
